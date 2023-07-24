@@ -1,9 +1,9 @@
-Запуск приложения
+Запуск приложения\
 
-Все команды выполняются из папки app
+Все команды выполняются из папки app\
 
-Шаг 1:  Поднимаем базу данных в докере командой     docker-compose up
-Шаг 2:  Шаг два активируем вирутальное окружение    source venv/bin/activate
-Шаг 3:  Устанавливаем зависимости                   pip3 install -r requirements.txt
-Шаг 4:  Запускаем сервер uvicorn командой           python3 -m uvicorn main:app --reload
-Шаг 5:  Запускаем тесты в postman
+Шаг 1:  Поднимаем базу данных в докере командой     docker-compose up\
+Шаг 2:  Активируем вирутальное окружение    source venv/bin/activate\
+Шаг 3:  Устанавливаем зависимости                   pip3 install -r requirements.txt\
+Шаг 4:  Запускаем сервер uvicorn командой           python3 -m uvicorn main:app --reload\
+Шаг 5:  Запускаем тесты в postman\
