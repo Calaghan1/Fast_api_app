@@ -5,19 +5,19 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    entrypoint: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0"
     volumes:
-      - .:/Fast_api_app
+      - .:/Y_LAB
     ports:
-      - 8000:80
+      - 8080:8000
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres
 
     depends_on:
       postgres:
         condition: service_healthy
- 
+
   postgres:
-    container_name: my_custom
     image: postgres:15.1-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
@@ -25,6 +25,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+    container_name: postgres
     ports:
       - '5432:5432'
     restart: always

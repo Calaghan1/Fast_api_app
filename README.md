@@ -9,3 +9,6 @@
 Шаг 3:  Устанавливаем зависимости                   pip3 install -r requirements.txt\
 Шаг 4:  Запускаем сервер uvicorn командой           python3 -m uvicorn main:app --reload\
 Шаг 5:  Запускаем тесты в postman\
+
+
+ЗАПУСК ТЕСТОВ docker-compose -f docker-compose-test.yaml up

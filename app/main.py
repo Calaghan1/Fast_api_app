@@ -11,8 +11,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
-    
+  
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -22,7 +21,7 @@ def get_db():
         db.close()
 
 #menus
-@app.get('/api/v1/menus',)
+@app.get('/api/v1/menus')
 def get_menu(db:Session = Depends(get_db)):
     return crud._get_menu(db)
 
@@ -153,7 +152,7 @@ def create_dish(api_test_menu_id, api_test_submenu_id, dish: schemas.Dishescrate
 @app.patch('/api/v1/menus/{api_test_menu_id}/submenus/{api_test_submenu_id}/dishes/{api_test_dish_id}')
 def update_dish(api_test_menu_id, api_test_submenu_id, api_test_dish_id, dish: schemas.Dishescrate, db: Session = Depends(get_db)):
     try:
-        menu_qr = db.query(models.Dishes).filter(models.Dishes.id==api_test_dish_id, models.Dishes.SubMenu_id==api_test_submenu_id).all()
+        menu_qr = db.query(models.Dishes).filter(models.Dishes.id==api_test_dish_id, models.Dishes.submenu_id ==api_test_submenu_id).all()
     except:
         raise HTTPException(status_code=404, detail="submenu not found")
     if not menu_qr:
@@ -163,7 +162,7 @@ def update_dish(api_test_menu_id, api_test_submenu_id, api_test_dish_id, dish: s
     return dish
 
 @app.delete('/api/v1/menus/{api_test_menu_id}/submenus/{api_test_submenu_id}/dishes/{api_test_dish_id}')
-def update_dish(api_test_menu_id, api_test_submenu_id, api_test_dish_id, db: Session = Depends(get_db)):
+def del_dish(api_test_menu_id, api_test_submenu_id, api_test_dish_id, db: Session = Depends(get_db)):
     try:
         menu_qr = db.query(models.Dishes).filter(models.Dishes.id==api_test_dish_id).all()
     except:
