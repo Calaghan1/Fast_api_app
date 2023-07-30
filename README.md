@@ -26,7 +26,7 @@ ORM запрос реализован через @property
         FROM dishes d 
         WHERE EXISTS (SELECT * FROM submenus sm WHERE sm.menu_id = m.id AND sm.id = d.submenu_id)
     ) as dishes_count
-FROM menus m;
+    FROM menus m;
 
 
 Тесты на проверку кол-ва блюд и подменю в меню в файле test_dish_count.py в папке тест
