@@ -7,3 +7,26 @@
 Для остановки приложения - "docker-compose stop" \
 
 Для запуска тестов - "docker-compose -f docker-compose-test.yaml up" \
+
+
+
+ORM запрос реализован через @property
+
+Был составлен sql запрос, который бы выдавал то что нужно, но его адаптация в orm запрос не увенчалась успехом. Поэтому выбрал был путь через @property. Вот сам запрос
+
+    SELECT 
+    m.*,
+    (
+        SELECT COUNT(*) 
+        FROM submenus sm 
+        WHERE sm.menu_id = m.id
+    ) as submenus_count,
+    (
+        SELECT COUNT(*) 
+        FROM dishes d 
+        WHERE EXISTS (SELECT * FROM submenus sm WHERE sm.menu_id = m.id AND sm.id = d.submenu_id)
+    ) as dishes_count
+FROM menus m;
+
+
+Тесты на проверку кол-ва блюд и подменю в меню в файле test_dish_count.py в папке тест

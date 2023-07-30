@@ -49,16 +49,16 @@ class Dishescrate(BaseModel):
     
 #     # SELECT 
     
-#     SELECT 
-#     m.*,
-#     (
-#         SELECT COUNT(*) 
-#         FROM submenus sm 
-#         WHERE sm.menu_id = m.id
-#     ) as submenus_count,
-#     (
-#         SELECT COUNT(*) 
-#         FROM dishes d 
-#         WHERE EXISTS (SELECT * FROM submenus sm WHERE sm.menu_id = m.id AND sm.id = d.submenu_id)
-#     ) as dishes_count
-# FROM menus m;
+    SELECT 
+    m.*,
+    (
+        SELECT COUNT(*) 
+        FROM submenus sm 
+        WHERE sm.menu_id = m.id
+    ) as submenus_count,
+    (
+        SELECT COUNT(*) 
+        FROM dishes d 
+        WHERE EXISTS (SELECT * FROM submenus sm WHERE sm.menu_id = m.id AND sm.id = d.submenu_id)
+    ) as dishes_count
+FROM menus m;
