@@ -2,7 +2,8 @@
 
 Запуск приложения
 
-Для запуска приложения - docker-compose -f docker-compose.yaml up -d  или make start
-Для запуска остановки приложения - docker-compose stop  или make stop
+Для запуска приложения - "docker-compose -f docker-compose.yaml up -d" \
 
-Для запуска тестов - docker-compose -f docker-compose-test.yaml up или make test
+Для остановки приложения - "docker-compose stop" \
+
+Для запуска тестов - "docker-compose -f docker-compose-test.yaml up" \
