@@ -2,8 +2,9 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 import crud, models, schemas
 from database import SessionLocal, engine
-
+import uvicorn
 from sqlalchemy import text
+
 
 
 
@@ -170,3 +171,7 @@ def del_dish(api_test_menu_id, api_test_submenu_id, api_test_dish_id, db: Sessio
     if not menu_qr:
         raise HTTPException(status_code=404, detail="dish not found")    
     return crud._delete_dish(db, api_test_submenu_id, api_test_dish_id)
+
+
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8000)

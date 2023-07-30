@@ -7,8 +7,10 @@ services:
       dockerfile: Dockerfile-test
     volumes:
       - .:/Fast_api_app
+    ports:
+      - 8000:80
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@postgres_test/postgres
 
     depends_on:
       postgres_test:
@@ -16,9 +18,9 @@ services:
 
   postgres_test:
     image: postgres:15.1-alpine
-    container_name: my_custom_container_name
+    container_name: postgres_test
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_test:/var/lib/postgresql/data/
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -30,4 +32,4 @@ services:
       test: [ "CMD-SHELL", "pg_isready" ]
       
 volumes:
-  postgres_data:
+  postgres_test:

@@ -10,26 +10,26 @@ services:
     ports:
       - 8000:80
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@postgres-real/postgres
 
     depends_on:
-      postgres:
+      postgres-real:
         condition: service_healthy
  
-  postgres:
-    container_name: my_custom
+  postgres-real:
+    container_name: postgres-real
     image: postgres:15.1-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres-real:/var/lib/postgresql/data/
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - '5432:5432'
+      - '5433:5433'
     restart: always
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       
 volumes:
-  postgres_data:
+  postgres-real:

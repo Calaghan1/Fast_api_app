@@ -13,13 +13,13 @@ class Menu(Base):
     description = Column(String, nullable=False)
     submenus = relationship("Submenu", backref="menu", cascade="all,delete", lazy="dynamic")
     
-    @hybrid_property
-    def count_of_submenus(self):
-        return len([s for s in self.submenus])
-    
-    @hybrid_property
-    def count_of_dishes(self):
-        return sum([s.dishes_in for s in self.submenus])
+    @property
+    def submenus_count(self):
+        return self.submenus.count()
+
+    @property
+    def dishes_count(self):
+        return sum(len(submenu.dishes) for submenu in self.submenus)
         
     
     
@@ -31,10 +31,10 @@ class Submenu(Base):
     menu_id = Column(UUID(as_uuid=True), ForeignKey("menus.id"))
     dishes = relationship("Dishes", backref="submenu", cascade="all,delete")
     
-    @hybrid_property
-    def dishes_in(self):
-        return len([d for d in self.dishes])
-    # menu = relationship('Menu', backref='id')
+    @property
+    def dishes_count(self):
+        return len(self.dishes)
+
     
 class Dishes(Base):
     __tablename__ = 'dishes'

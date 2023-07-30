@@ -1,7 +1,0 @@
-pydantic==1.10.0
-fastapi
-sqlalchemy
-uvicorn
-psycopg2-binary
-httpx
-pytest
