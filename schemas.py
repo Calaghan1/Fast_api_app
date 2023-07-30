@@ -40,25 +40,3 @@ class Dishescrate(BaseModel):
     price: str
     
     
-#     # SELECT count(*), (SELECT count(id) FROM submenus WHERE submenus.menu_id = menus.id)as submenus_count FROM menus;
-    
-    
-#     # SELECT * FROM menus, submenus, dishes GROUP BY menus.id;
-    
-    
-    
-#     # SELECT 
-    
-    SELECT 
-    m.*,
-    (
-        SELECT COUNT(*) 
-        FROM submenus sm 
-        WHERE sm.menu_id = m.id
-    ) as submenus_count,
-    (
-        SELECT COUNT(*) 
-        FROM dishes d 
-        WHERE EXISTS (SELECT * FROM submenus sm WHERE sm.menu_id = m.id AND sm.id = d.submenu_id)
-    ) as dishes_count
-FROM menus m;
