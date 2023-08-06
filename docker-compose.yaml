@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     volumes:
@@ -11,11 +11,12 @@ services:
       - 8000:80
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres-real/postgres
-
+      - REDIS_HOST=redis-real
+      - REDIS_PORT=6379
     depends_on:
       postgres-real:
         condition: service_healthy
- 
+
   postgres-real:
     container_name: postgres-real
     image: postgres:15.1-alpine
@@ -30,6 +31,12 @@ services:
     restart: always
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
-      
+
+  redis-real:
+    container_name: redis-real
+    image: redis:latest
+    command: redis-server --appendonly no
+    ports:
+      - "6379:6379"
 volumes:
   postgres-real:

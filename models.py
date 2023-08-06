@@ -1,9 +1,10 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, NUMERIC
-from sqlalchemy.orm import relationship
-from database import Base
 import uuid
+
+from sqlalchemy import NUMERIC, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
+
+from database import Base
 
 
 class Menu(Base):
@@ -11,8 +12,8 @@ class Menu(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
-    submenus = relationship("Submenu", backref="menu", cascade="all,delete", lazy="dynamic")
-    
+    submenus = relationship('Submenu', backref='menu', cascade='all,delete', lazy='dynamic')
+
     @property
     def submenus_count(self):
         return self.submenus.count()
@@ -20,26 +21,25 @@ class Menu(Base):
     @property
     def dishes_count(self):
         return sum(len(submenu.dishes) for submenu in self.submenus)
-        
-    
-    
+
+
 class Submenu(Base):
     __tablename__ = 'submenus'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
-    menu_id = Column(UUID(as_uuid=True), ForeignKey("menus.id"))
-    dishes = relationship("Dishes", backref="submenu", cascade="all,delete")
-    
+    menu_id = Column(UUID(as_uuid=True), ForeignKey('menus.id'))
+    dishes = relationship('Dishes', backref='submenu', cascade='all,delete')
+
     @property
     def dishes_count(self):
         return len(self.dishes)
 
-    
+
 class Dishes(Base):
     __tablename__ = 'dishes'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
-    price = Column(NUMERIC(10,2))
-    submenu_id = Column(UUID(as_uuid=True), ForeignKey("submenus.id"))
+    price = Column(NUMERIC(10, 2))
+    submenu_id = Column(UUID(as_uuid=True), ForeignKey('submenus.id'))

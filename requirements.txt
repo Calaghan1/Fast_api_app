@@ -5,3 +5,7 @@ uvicorn
 psycopg2-binary
 httpx
 pytest
+redis
+pre-commit==3.3.3
+mypy==1.4.1
+pep8
