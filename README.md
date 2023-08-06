@@ -7,3 +7,6 @@
 Для остановки приложения - "docker-compose stop" \
 
 Для запуска тестов - "docker-compose -f docker-compose-test.yaml up" \
+
+
+Фунция Revers реализованна в файлу app/main.py и использована во всей тестах в папке tests \
