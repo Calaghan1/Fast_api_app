@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import app, reverse
 
 client = TestClient(app)
 
@@ -15,7 +15,7 @@ submenu_id = ' '
 
 def test_create_test_menu():
     global menu_id
-    response = client.post('/api/v1/menus', json=menu)
+    response = client.post(reverse('create_menu'), json=menu)
     assert response.status_code == 201
     response = response.json()
     assert response['title'] == menu['title']
@@ -25,14 +25,15 @@ def test_create_test_menu():
 
 
 def test_get_submenu():
-    response = client.get(f'/api/v1/menus/{menu_id}/submenus')
+    response = client.get(reverse('get_submenu', {'target_menu_id': menu_id}))
     assert response.status_code == 200, 'Fail'
     assert response.json() == [], 'Fail'
 
 
 def test_create_submenu():
     global submenu_id
-    response = client.post(f'/api/v1/menus/{menu_id}/submenus', json=submenu)
+    reverse('create_submenu', {'target_menu_id': menu_id})
+    response = client.post(reverse('create_submenu', {'target_menu_id': menu_id}), json=submenu)
     assert response.status_code == 201
     response = response.json()
     assert response['title'] == submenu['title']
@@ -41,7 +42,7 @@ def test_create_submenu():
 
 
 def test_get_submenu_1():
-    response = client.get(f'/api/v1/menus/{menu_id}/submenus')
+    response = client.get(reverse('get_submenu', {'target_menu_id': menu_id}))
     assert response.status_code == 200, 'Fail'
     response = response.json()
     assert response[0]['title'] == submenu['title']
@@ -49,7 +50,7 @@ def test_get_submenu_1():
 
 
 def test_get_uniq_submenu():
-    response = client.get(f'/api/v1/menus/{menu_id}/submenus/{submenu_id}')
+    response = client.get(reverse('get_uniq_submenu', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
     assert response.status_code == 200, 'Fail'
     response = response.json()
     assert response['title'] == submenu['title']
@@ -57,7 +58,8 @@ def test_get_uniq_submenu():
 
 
 def test_update_submenu():
-    response = client.patch(f'/api/v1/menus/{menu_id}/submenus/{submenu_id}', json=updated_submenu)
+    response = client.patch(
+        reverse('update_submenu', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}), json=updated_submenu)
     assert response.status_code == 200
     response = response.json()
     assert response['title'] == updated_submenu['title']
@@ -65,7 +67,7 @@ def test_update_submenu():
 
 
 def test_get_uniq_submenu_1():
-    response = client.get(f'/api/v1/menus/{menu_id}/submenus/{submenu_id}')
+    response = client.get(reverse('get_uniq_submenu', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
     assert response.status_code == 200, 'Fail'
     response = response.json()
     assert response['title'] == updated_submenu['title']
@@ -73,24 +75,24 @@ def test_get_uniq_submenu_1():
 
 
 def test_delete_submenu():
-    response = client.delete(f'/api/v1/menus/{menu_id}/submenus/{submenu_id}')
+    response = client.delete(reverse('delete_submenu', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
     assert response.status_code == 200
     assert response.json() == {'status': True, 'message': 'The submenu has been deleted'}
 
 
 def test_get_submenu_1_1():
-    response = client.get(f'/api/v1/menus/{menu_id}/submenus')
+    response = client.get(reverse('get_submenu', {'target_menu_id': menu_id}))
     assert response.status_code == 200, 'Fail'
     assert response.json() == [], 'Fail'
 
 
 def test_delete_menu_1():
-    response = client.delete(f'/api/v1/menus/{menu_id}')
+    response = client.delete(reverse('delete_menu', {'target_menu_id': menu_id}))
     assert response.status_code == 200
     assert response.json() == {'status': True, 'message': 'The menu has been deleted'}
 
 
 def test_get_deleted():
-    response = client.get('/api/v1/menus')
+    response = client.get(reverse('get_menu'))
     assert response.status_code == 200, 'Fail'
     assert response.json() == [], 'Fail'

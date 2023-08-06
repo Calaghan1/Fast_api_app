@@ -4,6 +4,7 @@ import pickle
 import redis
 
 local_host = 'localhost'
+local_port = 6379
 docker: str = str(os.getenv('REDIS_HOST'))
 docker_port: str = str(os.getenv('REDIS_PORT'))
 
@@ -28,3 +29,6 @@ class RedisTools:
 
     def del_all(self):
         self.rd.flushall()
+
+
+rd = RedisTools()

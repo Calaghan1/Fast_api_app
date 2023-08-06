@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-import schemas
-from crud import SubmenuRepository
+from repository.crud import SubmenuRepository
+from schemas_all import submenu_schemas
 
 submenu_router = APIRouter()
 
@@ -16,13 +16,13 @@ def get_uniq_submenu(target_menu_id, target_submenu_id, submenu: SubmenuReposito
     return submenu._get_uniq_submenu(target_submenu_id)
 
 
-@submenu_router.post('/api/v1/menus/{target_menu_id}/submenus', response_model=schemas.ShowSubmenu, status_code=201)
-def create_submenu(target_menu_id, submenu_data: schemas.SubmenuCreate, submenu: SubmenuRepository = Depends()):
+@submenu_router.post('/api/v1/menus/{target_menu_id}/submenus', response_model=submenu_schemas.ShowSubmenu, status_code=201)
+def create_submenu(target_menu_id, submenu_data: submenu_schemas.SubmenuCreate, submenu: SubmenuRepository = Depends()):
     return submenu._create_submenu(submenu_data, target_menu_id)
 
 
 @submenu_router.patch('/api/v1/menus/{target_menu_id}/submenus/{target_submenu_id}')
-def update_submenu(target_menu_id, target_submenu_id, submenu_data: schemas.SubmenuCreate, submenu: SubmenuRepository = Depends()):
+def update_submenu(target_menu_id, target_submenu_id, submenu_data: submenu_schemas.SubmenuCreate, submenu: SubmenuRepository = Depends()):
     return submenu._update_submenu(submenu_data, target_submenu_id)
 
 

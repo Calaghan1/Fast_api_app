@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import app, reverse
 
 client = TestClient(app)
 
@@ -8,19 +8,17 @@ menu = {'title': 'menu 1', 'description': 'desc 1'}
 menu_update = {'title': 'update menu 1', 'description': 'update desc 1'}
 
 menu_id = ''
-# def test_drop_tables():
-#     models.Menu.__table__.drop()
 
 
 def test_get_menu():
-    response = client.get('/api/v1/menus')
+    response = client.get(reverse('get_menu'))
     assert response.status_code == 200, 'Fail'
     assert response.json() == [], 'Fail'
 
 
 def test_create_menu():
     global menu_id
-    response = client.post('/api/v1/menus', json=menu)
+    response = client.post(reverse('create_menu'), json=menu)
     assert response.status_code == 201
     response = response.json()
     assert response['title'] == menu['title']
@@ -29,7 +27,7 @@ def test_create_menu():
 
 
 def test_get_uniq_menu():
-    response = client.get(f'/api/v1/menus/{menu_id}')
+    response = client.get(reverse('get_uniq_menu', {'target_menu_id': menu_id}))
     assert response.status_code == 200, 'Fail'
     response = response.json()
     assert response['title'] == menu['title']
@@ -37,7 +35,7 @@ def test_get_uniq_menu():
 
 
 def test_update_menu():
-    response = client.patch(f'/api/v1/menus/{menu_id}', json=menu_update)
+    response = client.patch(reverse('update_menu', {'target_menu_id': menu_id}), json=menu_update)
     assert response.status_code == 200
     response = response.json()
     assert response['title'] == menu_update['title']
@@ -45,12 +43,12 @@ def test_update_menu():
 
 
 def test_delete_menu():
-    response = client.delete(f'/api/v1/menus/{menu_id}')
+    response = client.delete(reverse('delete_menu', {'target_menu_id': menu_id}))
     assert response.status_code == 200
     assert response.json() == {'status': True, 'message': 'The menu has been deleted'}
 
 
 def test_get_deleted():
-    response = client.get('/api/v1/menus')
+    response = client.get(reverse('get_menu'))
     assert response.status_code == 200, 'Fail'
     assert response.json() == [], 'Fail'
