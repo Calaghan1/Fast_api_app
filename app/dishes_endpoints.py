@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from repository.crud import DishesRepository
+from repository.dish_repository import DishesRepository
 from schemas_all import dish_schemas
 
 dish_router = APIRouter()

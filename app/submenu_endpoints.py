@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from repository.crud import SubmenuRepository
+from repository.submenu_repository import SubmenuRepository
 from schemas_all import submenu_schemas
 
 submenu_router = APIRouter()

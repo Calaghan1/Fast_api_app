@@ -14,11 +14,15 @@ class DishesRepository:
         self.rd_dishes = 'dishes'
 
     def _get_dishes(self, api_test_menu_id: str, api_test_submenu_id: str) -> list[dish_schemas.ShowDishes]:
+
         cache = rd.get_value(self.rd_dishes)
         if cache:
             return cache
         else:
-            response = self.db.query(models.Dishes).filter(models.Dishes.submenu_id == api_test_submenu_id).all()
+            response = []
+            for d in self.db.query(models.Dishes).filter(models.Dishes.submenu_id == api_test_submenu_id).all():
+                response.append(dish_schemas.ShowDishes(id=d.id, title=d.title,
+                                description=d.description, price=d.price))
             rd.set_pair(self.rd_dishes, response)
             return response
 

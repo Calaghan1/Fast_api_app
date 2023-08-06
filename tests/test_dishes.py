@@ -61,6 +61,7 @@ def test_create_dish():
 
 
 def test_get_dishes_o():
+    print(reverse('get_dishes', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
     response = client.get(reverse('get_dishes', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
     assert response.status_code == 200, 'Fail'
     response = response.json()
