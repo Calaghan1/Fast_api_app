@@ -9,7 +9,7 @@ from schemas_all import submenu_schemas
 
 
 class SubmenuRepository:
-    def __init__(self, db: Session = Depends(get_db)):
+    def __init__(self, db: Session = Depends(get_db)) -> None:
         self.db = db
         self.rd_submenus = 'submenus'
 
@@ -20,15 +20,10 @@ class SubmenuRepository:
                 raise HTTPException(status_code=404, detail='menu not found')
         except Exception:
             raise HTTPException(status_code=404, detail='menu not found')
-        cache = rd.get_value(self.rd_submenus)
-        if cache:
-            return cache
-        else:
-            response = []
-            for m in self.db.query(models.Submenu).filter(models.Submenu.menu_id == menu_id).all():
-                response.append(submenu_schemas.ShowSubmenu(id=m.id, description=m.description,
-                                title=m.title, dishes_count=m.dishes_count))
-            rd.set_pair(self.rd_submenus, response)
+        response = []
+        for m in self.db.query(models.Submenu).filter(models.Submenu.menu_id == menu_id).all():
+            response.append(submenu_schemas.ShowSubmenu(id=m.id, description=m.description,
+                            title=m.title, dishes_count=m.dishes_count))
         return response
 
     def _get_uniq_submenu(self, api_test_submenu_id: str) -> submenu_schemas.ShowSubmenu:
@@ -38,18 +33,11 @@ class SubmenuRepository:
                 raise HTTPException(status_code=404, detail='submenu not found')
         except Exception:
             raise HTTPException(status_code=404, detail='submenu not found')
-        cache = rd.get_value(self.rd_submenus + api_test_submenu_id)
-        if cache:
-            return cache
-        else:
-            response = submenu_schemas.ShowSubmenu(id=m.id, description=m.description,
+        response = submenu_schemas.ShowSubmenu(id=m.id, description=m.description,
                                                    title=m.title, dishes_count=m.dishes_count)
-            rd.set_pair(self.rd_submenus + api_test_submenu_id, response)
-            return response
+        return response
 
     def _create_submenu(self, menu: submenu_schemas.SubmenuCreate, menu_id: str) -> submenu_schemas.ShowSubmenu:
-        # rd.del_key(self.rd_submenus)
-        rd.del_all()
         m = models.Submenu(title=menu.title, description=menu.description, menu_id=menu_id)
         self.db.add(m)
         self.db.commit()
@@ -63,9 +51,6 @@ class SubmenuRepository:
                 raise HTTPException(status_code=404, detail='submenu not found')
         except Exception:
             raise HTTPException(status_code=404, detail='submenu not found')
-        # rd.del_key(self.rd_submenus)
-        # rd.del_key(self.rd_submenus+api_test_submenu_id)
-        rd.del_all()
         query = update(models.Submenu).where(models.Submenu.id == api_test_submenu_id).values(
             title=menu.title, description=menu.description).returning(models.Submenu.id, models.Submenu.title, models.Submenu.description)
         self.db.execute(query)
@@ -79,9 +64,6 @@ class SubmenuRepository:
                 raise HTTPException(status_code=404, detail='submenu not found')
         except Exception:
             raise HTTPException(status_code=404, detail='submenu not found')
-        # rd.del_key(self.rd_submenus)
-        # rd.del_key(self.rd_submenus+api_test_submenu_id)
-        rd.del_all()
         query = self.db.query(models.Submenu).filter(models.Submenu.id == api_test_submenu_id,
                                                      models.Submenu.menu_id == api_test_menu_id).first()
         self.db.delete(query)
