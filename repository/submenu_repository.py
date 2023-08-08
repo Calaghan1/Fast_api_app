@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 
 import database.models as models
 from database.database import get_db
-from database.redis_tools import rd
 from schemas_all import submenu_schemas
 
 
@@ -34,7 +33,7 @@ class SubmenuRepository:
         except Exception:
             raise HTTPException(status_code=404, detail='submenu not found')
         response = submenu_schemas.ShowSubmenu(id=m.id, description=m.description,
-                                                   title=m.title, dishes_count=m.dishes_count)
+                                               title=m.title, dishes_count=m.dishes_count)
         return response
 
     def _create_submenu(self, menu: submenu_schemas.SubmenuCreate, menu_id: str) -> submenu_schemas.ShowSubmenu:

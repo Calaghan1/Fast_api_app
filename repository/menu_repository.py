@@ -4,21 +4,20 @@ from sqlalchemy.orm import Session
 
 import database.models as models
 from database.database import get_db
-from database.redis_tools import rd
 from schemas_all import menu_schemas
-from sqlalchemy import delete, func, select
+
 
 class MenuRepository:
     def __init__(self, db: Session = Depends(get_db)) -> None:
         self.db = db
-        
+
     def _get_menu(self) -> list[menu_schemas.ShowMenu]:
-            response = []
-            menu = self.db.query(models.Menu).all()
-            for m in menu:
-                response.append(menu_schemas.ShowMenu(id=m.id, description=m.description, title=m.title,
-                                submenus_count=m.submenus_count, dishes_count=m.dishes_count))
-            return response
+        response = []
+        menu = self.db.query(models.Menu).all()
+        for m in menu:
+            response.append(menu_schemas.ShowMenu(id=m.id, description=m.description, title=m.title,
+                            submenus_count=m.submenus_count, dishes_count=m.dishes_count))
+        return response
 
     def _get_uniq_menu(self, menu_id: str) -> menu_schemas.ShowMenu:
         try:
@@ -28,7 +27,7 @@ class MenuRepository:
         except Exception:
             raise HTTPException(status_code=404, detail='menu not found')
         response = menu_schemas.ShowMenu(id=m.id, description=m.description, title=m.title,
-                                             submenus_count=m.submenus_count, dishes_count=m.dishes_count)
+                                         submenus_count=m.submenus_count, dishes_count=m.dishes_count)
         return response
 
     def _create_menu(self, menu: menu_schemas.MenuCreate) -> menu_schemas.ShowMenu:
@@ -63,4 +62,3 @@ class MenuRepository:
         query.delete()
         self.db.commit()
         return {'status': True, 'message': 'The menu has been deleted'}
-    

@@ -4,19 +4,18 @@ from sqlalchemy.orm import Session
 
 import database.models as models
 from database.database import get_db
-from database.redis_tools import rd
 from schemas_all import dish_schemas
 
 
 class DishesRepository:
-    def __init__(self, db: Session = Depends(get_db)) ->None:
+    def __init__(self, db: Session = Depends(get_db)) -> None:
         self.db = db
 
     def _get_dishes(self, api_test_menu_id: str, api_test_submenu_id: str) -> list[dish_schemas.ShowDishes]:
         response = []
         for d in self.db.query(models.Dishes).filter(models.Dishes.submenu_id == api_test_submenu_id).all():
             response.append(dish_schemas.ShowDishes(id=d.id, title=d.title,
-                                description=d.description, price=d.price))
+                                                    description=d.description, price=d.price))
         return response
 
     def _create_dish(self, dish: dish_schemas.Dishescrate, api_test_menu_id: str, api_test_submenu_id: str) -> dish_schemas.ShowDishes:

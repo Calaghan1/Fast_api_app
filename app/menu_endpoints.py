@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from services.menu_service import menu_service
 from schemas_all import menu_schemas
+from services.menu_service import menu_service
 
 menu_router = APIRouter()
 

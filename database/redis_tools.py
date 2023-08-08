@@ -1,6 +1,7 @@
 import os
 import pickle
 from typing import Any
+
 import redis
 
 local_host = 'localhost'
@@ -17,20 +18,20 @@ class RedisTools:
         data = pickle.dumps(value)
         self.rd.set(key, data)
 
-    def get_value(self, key:str) ->Any:
+    def get_value(self, key: str) -> Any:
         data = self.rd.get(key)
         if data:
             return pickle.loads(data)
         else:
             return data
 
-    def del_key(self, key:str) -> None:
-            self.rd.delete(key)
-            
+    def del_key(self, key: str) -> None:
+        self.rd.delete(key)
+
     def find_and_del(self, pattern: str) -> None:
         for key in self.rd.scan_iter(match='*' + pattern + '*'):
             self.rd.delete(key)
-        
+
     def del_all(self) -> None:
         self.rd.flushall()
 
