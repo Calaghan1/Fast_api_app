@@ -34,6 +34,7 @@ class submenus_service:
 
     def update_submenu(self, menu_id: str, submenu_id: str, data: submenu_schemas.SubmenuCreate) -> submenu_schemas.ShowSubmenu:
         rd.find_and_del(submenu_id)
+        rd.del_key(f'menus-{menu_id}:submenus')
         return self.submenu_rep._update_submenu(data, submenu_id)
 
     def delete_submenu(self, menu_id: str, submenu_id: str) -> dict:
