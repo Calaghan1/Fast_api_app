@@ -12,7 +12,7 @@ docker_port: str = str(os.getenv('REDIS_PORT'))
 
 class RedisTools:
     def __init__(self) -> None:
-        self.rd = redis.Redis(host=docker, port=int(docker_port))
+        self.rd = redis.Redis(host=local_host, port=int(local_port))
 
     def set_pair(self, key: str, value: Any) -> None:
         data = pickle.dumps(value)

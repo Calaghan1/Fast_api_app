@@ -4,9 +4,9 @@ import database.models as models
 from app.dishes_endpoints import dish_router
 from app.menu_endpoints import menu_router
 from app.submenu_endpoints import submenu_router
-from database.database import engine
+from database.database import engine, create_tables
 
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(router=menu_router)
@@ -24,3 +24,8 @@ def reverse(name: str, values={}) -> str:
         if name == route.name:
             return route.path.format(**values)
     return ''
+
+
+@app.on_event("startup")
+async def set_up_base():
+    await create_tables()

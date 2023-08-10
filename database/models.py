@@ -14,13 +14,13 @@ class Menu(Base):
     description = Column(String, nullable=False)
     submenus = relationship('Submenu', backref='menu', cascade='all,delete', lazy='dynamic')
 
-    @property
-    def submenus_count(self):
-        return self.submenus.count()
+    # @property
+    # def submenus_count(self):
+    #     return self.submenus.count()
 
-    @property
-    def dishes_count(self):
-        return sum(len(submenu.dishes) for submenu in self.submenus)
+    # @property
+    # def dishes_count(self):
+    #     return  sum(len(submenu.dishes) for submenu in self.submenus)
 
 
 class Submenu(Base):
