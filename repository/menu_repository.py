@@ -6,7 +6,7 @@ import database.models as models
 from database.database import get_db
 from schemas_all import menu_schemas
 from sqlalchemy import delete, func, select, distinct, outerjoin
-
+from sqlalchemy.orm import selectinload
 class MenuRepository:
     def __init__(self, db: Session = Depends(get_db)) -> None:
         self.db = db
@@ -22,7 +22,7 @@ class MenuRepository:
                                             )
         menus = menu.all()
         for m in menus:
-            response.append(menu_schemas.ShowMenu(id=m[0], description=m[1], title=m[2],
+            response.append(menu_schemas.ShowMenu(id=m[0], title=m[1], description=m[2],
                             submenus_count=str(m[3]), dishes_count=str(m[4])))
         return response
 
@@ -41,7 +41,7 @@ class MenuRepository:
                 raise HTTPException(status_code=404, detail='menu not found')
         except Exception:
             raise HTTPException(status_code=404, detail='menu not found')
-        response = menu_schemas.ShowMenu(id=m[0], description=m[1], title=m[2],
+        response = menu_schemas.ShowMenu(id=m[0], title=m[1], description=m[2],
                             submenus_count=str(m[3]), dishes_count=str(m[4]))
         return response
 
@@ -76,3 +76,38 @@ class MenuRepository:
         await self.db.execute(delete(models.Menu).where(models.Menu.id == api_test_menu_id))
         await self.db.commit()
         return {'status': True, 'message': 'The menu has been deleted'}
+
+
+
+    async def _get_all_data(self):
+        result = await self.db.execute(
+            select(models.Menu).options(
+                selectinload(models.Menu.submenus).selectinload(models.Submenu.dishes)
+            )
+        )
+        menus = result.scalars().all()
+        # print(menus)
+        # menus_data = []
+        # for menu in menus:
+        #     menu_data = {
+        #         'id': menu.id,
+        #         'title': menu.title,
+        #         'description': menu.description,
+        #         'submenus': [
+        #             {
+        #                 'id': submenu.id,
+        #                 'title': submenu.title,
+        #                 'description': submenu.description,
+        #                 'dishes': [
+        #                     {
+        #                         'id': dish.id,
+        #                         'title': dish.title,
+        #                         'description': dish.description,
+        #                         'price': str(dish.price)
+        #                     } for dish in submenu.dishes
+        #                 ]
+        #             } for submenu in menu.submenus
+        #         ]
+        #     }
+        #     menus_data.append(menu_data)
+        return menus

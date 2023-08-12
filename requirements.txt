@@ -6,6 +6,9 @@ psycopg2-binary
 httpx
 pytest
 redis
+aioredis
 pre-commit==3.3.3
 mypy==1.4.1
 pep8
+pytest-tornasync
+openpyxl

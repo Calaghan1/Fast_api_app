@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 
+import json
 import database.models as models
 from app.dishes_endpoints import dish_router
 from app.menu_endpoints import menu_router
@@ -7,6 +8,9 @@ from app.submenu_endpoints import submenu_router
 from database.database import engine, create_tables
 
 # models.Base.metadata.create_all(bind=engine)
+import time
+
+
 
 app = FastAPI()
 app.include_router(router=menu_router)
@@ -14,6 +18,9 @@ app.include_router(router=submenu_router)
 app.include_router(router=dish_router)
 
 list_or_routes = []
+
+with open('openapi.json', 'w') as f:
+    f.write(json.dumps(app.openapi()))
 
 for route in app.routes:
     list_or_routes.append(route)
