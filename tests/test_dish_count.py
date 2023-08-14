@@ -1,17 +1,14 @@
-from fastapi.testclient import TestClient
-
-from app.main import app, reverse
-
-client = TestClient(app)
-from database.database import create_async_engine, Base
-
 import pytest
 from httpx import AsyncClient
+from fastapi import status
+from sqlalchemy.orm import Session
+from app.main import app, reverse
+from database.database import create_async_engine, Base
+import os
+
 
 LOCAL_DATABASE_URL = 'postgresql+asyncpg://postgres:posrgres@0.0.0.0:5432/postgres'
-
-client = TestClient(app)
-
+DOKER_DATABASE_URL = os.getenv('DATABASE_URL')
 menu_id = ''
 submenu_id = ''
 dish_id = ''
@@ -35,9 +32,12 @@ updated_dish = {
     'price': '22.50'
 }
 
+
+
+
 @pytest.mark.asyncio
 async def test_create_menu():
-    engine = create_async_engine(LOCAL_DATABASE_URL)
+    engine = create_async_engine(DOKER_DATABASE_URL)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     async with AsyncClient(app=app, base_url="http://test") as client:
@@ -59,6 +59,9 @@ async def test_create_submenu():
         assert response['title'] == submenu['title']
         assert response['description'] == submenu['description']
         submenu_id = str(response['id'])
+
+
+
 
 @pytest.mark.asyncio
 async def test_create_dish():
@@ -83,6 +86,33 @@ async def test_create_dish_1():
         assert response['description'] == dish_2['description']
         global dish_id
         dish_id = str(response['id'])
+
+
+
+
+@pytest.mark.asyncio
+async def get_all_data():
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.get(
+            reverse('get_all_data'))
+        assert response.status_code == 200
+        response = response.json()
+        assert response[0] == {'title': 'menu 1', 'description': 'desc 1', 'submenus': [
+            {'title': 'submenu 1', 'description': 'sub desc 1', 'dishes': [
+                {
+                    'title': 'My dish 1',
+                    'description': 'My dish description 1',
+                    'price': '12.50'
+                },
+                {
+                    'title': 'My dish 2',
+                    'description': 'My dish description 2',
+                    'price': '32.50'
+                }
+                ]}
+            ]}
+
+
 
 @pytest.mark.asyncio
 async def test_get_dishes_o():
@@ -157,3 +187,6 @@ async def test_get_menu():
         response = await client.get(reverse('get_menu'))
         assert response.status_code == 200, 'Fail'
         assert response.json() == [], 'Fail'
+        
+
+

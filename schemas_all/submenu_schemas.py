@@ -3,8 +3,8 @@ import uuid
 from pydantic import BaseModel
 
 
-class Config(BaseModel):
-    orm_mode = True
+# class Config(BaseModel):
+#     orm_mode = True
 
 
 class SubmenuCreate(BaseModel):
@@ -12,8 +12,11 @@ class SubmenuCreate(BaseModel):
     description: str
 
 
-class ShowSubmenu(Config):
+class ShowSubmenu(BaseModel):
     id: uuid.UUID
     title: str
     description: str
     dishes_count: int
+
+    class ConfigDict:
+        from_attributes = True

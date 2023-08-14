@@ -10,7 +10,7 @@ services:
     ports:
       - 8001:81
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres_test/postgres
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres_test/postgres
       - REDIS_HOST=redis
       - REDIS_PORT=6378
     depends_on:

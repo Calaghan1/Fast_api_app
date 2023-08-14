@@ -112,3 +112,4 @@ async def test_get_deleted():
         response = await client.get(reverse('get_menu'))
         assert response.status_code == 200, 'Fail'
         assert response.json() == [], 'Fail'
+        

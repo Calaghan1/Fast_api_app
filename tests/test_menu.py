@@ -8,7 +8,7 @@ from database.database import create_async_engine, Base
 import pytest
 from httpx import AsyncClient
 
-
+from database.database import END_URL
 from database.database import SessionLocal
 
 menu = {'title': 'menu 1', 'description': 'desc 1'}
@@ -21,14 +21,14 @@ menu_id = ''
 
 
 
-async def create_table():
-    engine = create_async_engine(LOCAL_DATABASE_URL)
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+# async def create_table():
+#     engine = create_async_engine(END_URL)
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
         
         
 @pytest.mark.asyncio
-async def test_get_menu(ac: AsyncClient):
+async def test_get_menu():
     async with AsyncClient(app=app, base_url="http://test") as client:
         response = await client.get(reverse('get_menu'))
         assert response.status_code == 200

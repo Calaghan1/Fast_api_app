@@ -29,3 +29,27 @@ async def update_dish(target_menu_id, target_submenu_id, target_dish_id, dish_da
 @dish_router.delete('/api/v1/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes/{target_dish_id}')
 async def del_dish(target_menu_id, target_submenu_id, target_dish_id, back_ground_task: BackgroundTasks, dish: dishes_service = Depends()) -> dict:
     return await dish.delete_dish(back_ground_task, target_menu_id, target_submenu_id, target_dish_id)
+
+
+        # if data['type'] == 'menu':
+        #     d['title'] = data['title']
+        #     d['description'] = data['description']
+        #     print(d)     
+        #     response = requests.post('http://127.0.0.1:8000/api/v1/menus', json = d)
+        #     data['real_id'] = last_menu_id = response.json()['id']
+        #     NEW_SAVED_DATA.append(data)
+            
+        # if data['type'] == 'submenu':
+        #     d['title'] = data['title']
+        #     d['description'] = data['description']
+        #     response = requests.post(f'http://127.0.0.1:8000/api/v1/menus/{last_menu_id}/submenus', json = d)
+        #     data['real_id'] = last_submenu_id = response.json()['id']
+        #     NEW_SAVED_DATA.append(data)
+            
+        # if data['type'] == 'dish':
+        #     d['title'] = data['title']
+        #     d['description'] = data['description']
+        #     d['price'] = data['price']
+        #     response = requests.post(f'http://127.0.0.1:8000/api/v1/menus/{last_menu_id}/submenus/{last_submenu_id}/dishes', json = d)
+        #     data['real_id'] = response.json()['id']
+        #     NEW_SAVED_DATA.append(data)

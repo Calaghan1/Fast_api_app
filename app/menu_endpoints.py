@@ -31,6 +31,6 @@ async def delete_menu(target_menu_id: str, back_ground_task: BackgroundTasks, me
 
     return await menu.delete_menu(back_ground_task, target_menu_id)
 
-@menu_router.get('/api/v1/menuss')
+@menu_router.get('/api/v1/menus_all')
 async def get_all_data(menu: menu_service = Depends()):
     return await menu.get_all() 

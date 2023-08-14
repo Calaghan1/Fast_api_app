@@ -1,27 +1,12 @@
 version: '3.8'
 
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/Fast_api_app
-    ports:
-      - 8000:80
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres-real/postgres
-      - REDIS_HOST=redis-real
-      - REDIS_PORT=6379
-    depends_on:
-      postgres-real:
-        condition: service_healthy
-
   postgres-real:
     container_name: postgres-real
+    user: postgres
     image: postgres:15.1-alpine
     volumes:
-      - postgres-real:/var/l  ib/postgresql/data/
+      - postgres-real:/var/lib/postgresql/data/
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -32,11 +17,71 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/Fast_api_app
+    ports:
+      - 8000:80
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres-real/postgres
+      - REDIS_HOST=redis-real
+      - REDIS_PORT=6379
+    depends_on:
+      postgres-real:
+        condition: service_healthy
+
+
+
   redis-real:
     container_name: redis-real
     image: redis:latest
     command: redis-server --appendonly no
     ports:
       - "6379:6379"
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile-celery
+    container_name: ylab_celery_beat
+    environment:
+      - BROKER_URL=pyamqp://guest:guest@rabbitmq:5672//
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres-real/postgres
+      - REDIS_HOST=redis-real
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - postgres-real
+      - web
+      - redis-real
+    command: [ "celery", "-A", "admin_task:celery_app", "beat", "--loglevel=info" ]
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-celery
+    container_name: ylab_celery_worker
+
+    environment:
+      - BROKER_URL=pyamqp://guest:guest@rabbitmq:5672//
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres-real/postgres
+      - REDIS_HOST=redis-real
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - postgres-real
+      - web
+      - redis-real
+    command: [ "celery", "-A", "admin_task:celery_app", "worker", "--loglevel=info", "--concurrency", "1", "-P", "solo"]
+
+  rabbitmq:
+    container_name: ylab_rabbitmq
+    image: "rabbitmq:management"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 volumes:
   postgres-real:

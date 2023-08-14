@@ -1,7 +1,0 @@
-version: "3"
-services:
-  rabbitmq:
-    image: rabbitmq:3.10.7-management
-    container_name: rabbitmq-container
-    ports:
-      - 15672:15672

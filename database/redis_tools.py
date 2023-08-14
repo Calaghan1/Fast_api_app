@@ -9,10 +9,19 @@ local_port = 6379
 docker: str = str(os.getenv('REDIS_HOST'))
 docker_port: str = str(os.getenv('REDIS_PORT'))
 
-
+end_host = ''
+if docker:
+    end_host = docker
+else:
+    end_host = 'localhost'
+port = ''
+if docker_port:
+    port = docker_port
+else:
+    port = 6379
 class RedisTools:
     def __init__(self) -> None:
-        self.rd = redis.Redis(host=local_host, port=int(local_port))
+        self.rd = redis.Redis(host=docker, port=docker_port)
 
     def set_pair(self, key: str, value: Any) -> None:
         data = pickle.dumps(value)
