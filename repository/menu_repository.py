@@ -86,28 +86,4 @@ class MenuRepository:
             )
         )
         menus = result.scalars().all()
-        # print(menus)
-        # menus_data = []
-        # for menu in menus:
-        #     menu_data = {
-        #         'id': menu.id,
-        #         'title': menu.title,
-        #         'description': menu.description,
-        #         'submenus': [
-        #             {
-        #                 'id': submenu.id,
-        #                 'title': submenu.title,
-        #                 'description': submenu.description,
-        #                 'dishes': [
-        #                     {
-        #                         'id': dish.id,
-        #                         'title': dish.title,
-        #                         'description': dish.description,
-        #                         'price': str(dish.price)
-        #                     } for dish in submenu.dishes
-        #                 ]
-        #             } for submenu in menu.submenus
-        #         ]
-        #     }
-        #     menus_data.append(menu_data)
         return menus
