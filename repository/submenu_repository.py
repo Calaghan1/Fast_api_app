@@ -1,11 +1,11 @@
 from fastapi import Depends, HTTPException
-from sqlalchemy import update
+from sqlalchemy import delete, distinct, func, select, update
 from sqlalchemy.orm import Session
 
 import database.models as models
 from database.database import get_db
 from schemas_all import submenu_schemas
-from sqlalchemy import delete, func, select, distinct, outerjoin
+
 
 class SubmenuRepository:
     def __init__(self, db: Session = Depends(get_db)) -> None:
@@ -23,8 +23,8 @@ class SubmenuRepository:
         response = []
         submenus = await self.db.execute(select(models.Submenu.id, models.Submenu.title, models.Submenu.description,
                                                 func.count(distinct(models.Dishes.id).label('dishes_count'))).where(
-                                                    models.Submenu.menu_id == menu_id).outerjoin(models.Dishes, 
-                                                         models.Dishes.submenu_id == models.Submenu.id).group_by(
+                                                    models.Submenu.menu_id == menu_id).outerjoin(models.Dishes,
+                                                                                                 models.Dishes.submenu_id == models.Submenu.id).group_by(
                                                         models.Submenu.id))
         submenus = submenus.all()
         for m in submenus:
@@ -35,9 +35,9 @@ class SubmenuRepository:
     async def _get_uniq_submenu(self, menu_id: str, api_test_submenu_id: str) -> submenu_schemas.ShowSubmenu:
         try:
             submenus = await self.db.execute(select(models.Submenu.id, models.Submenu.title, models.Submenu.description,
-                                                func.count(distinct(models.Dishes.id).label('dishes_count'))).where(
-                                                    models.Submenu.menu_id == menu_id).outerjoin(models.Dishes, 
-                                                         models.Dishes.submenu_id == models.Submenu.id).group_by(
+                                                    func.count(distinct(models.Dishes.id).label('dishes_count'))).where(
+                models.Submenu.menu_id == menu_id).outerjoin(models.Dishes,
+                                                             models.Dishes.submenu_id == models.Submenu.id).group_by(
                                                         models.Submenu.id))
             submenus = submenus.one()
             if not submenus:
@@ -45,7 +45,7 @@ class SubmenuRepository:
         except Exception:
             raise HTTPException(status_code=404, detail='submenu not found')
         response = submenu_schemas.ShowSubmenu(id=submenus[0], title=submenus[1],
-                            description=submenus[2], dishes_count=submenus[3])
+                                               description=submenus[2], dishes_count=submenus[3])
         return response
 
     async def _create_submenu(self, menu: submenu_schemas.SubmenuCreate, menu_id: str) -> submenu_schemas.ShowSubmenu:
@@ -63,7 +63,7 @@ class SubmenuRepository:
                 raise HTTPException(status_code=404, detail='submenu not found')
         except Exception:
             raise HTTPException(status_code=404, detail='submenu not found')
-        res = await self.db.execute(update(models.Submenu).where(models.Submenu.id == api_test_submenu_id).values(
+        await self.db.execute(update(models.Submenu).where(models.Submenu.id == api_test_submenu_id).values(
             title=menu.title, description=menu.description))
         await self.db.commit()
         return await self._get_uniq_submenu(menu_id, api_test_submenu_id)

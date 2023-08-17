@@ -1,7 +1,10 @@
-from celery import Celery
 import asyncio
 from datetime import timedelta
+
+from celery import Celery
+
 from pars_xls import task
+
 celery_app = Celery('admin_task')
 
 celery_app.conf.update(
@@ -19,6 +22,7 @@ celery_app.conf.update(
         },
     }
 )
+
 
 @celery_app.task
 def main() -> None:

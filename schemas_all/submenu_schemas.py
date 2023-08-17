@@ -2,7 +2,6 @@ import uuid
 
 from pydantic import BaseModel
 
-
 # class Config(BaseModel):
 #     orm_mode = True
 

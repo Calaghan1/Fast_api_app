@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 
 from schemas_all import menu_schemas
 from services.menu_service import menu_service
@@ -12,7 +12,7 @@ async def get_menu(menu: menu_service = Depends()) -> list[menu_schemas.ShowMenu
 
 
 @menu_router.post('/api/v1/menus', status_code=201)
-async def create_menu(menu_data: menu_schemas.MenuCreate, back_ground_task: BackgroundTasks,  menu: menu_service = Depends()) -> menu_schemas.ShowMenu:
+async def create_menu(menu_data: menu_schemas.MenuCreate, back_ground_task: BackgroundTasks, menu: menu_service = Depends()) -> menu_schemas.ShowMenu:
     return await menu.create_menu(back_ground_task, menu_data)
 
 
@@ -31,6 +31,7 @@ async def delete_menu(target_menu_id: str, back_ground_task: BackgroundTasks, me
 
     return await menu.delete_menu(back_ground_task, target_menu_id)
 
+
 @menu_router.get('/api/v1/menus_all')
-async def get_all_data(menu: menu_service = Depends()):
-    return await menu.get_all() 
+async def get_all_data(menu: menu_service = Depends()) -> list:
+    return await menu.get_all()

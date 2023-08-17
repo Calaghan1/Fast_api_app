@@ -1,15 +1,13 @@
-from fastapi import FastAPI, BackgroundTasks
-
 import json
-import database.models as models
+
+from fastapi import FastAPI
+
 from app.dishes_endpoints import dish_router
 from app.menu_endpoints import menu_router
 from app.submenu_endpoints import submenu_router
-from database.database import engine, create_tables
+from database.database import create_tables
 
 # models.Base.metadata.create_all(bind=engine)
-import time
-
 
 
 app = FastAPI()
@@ -33,6 +31,6 @@ def reverse(name: str, values={}) -> str:
     return ''
 
 
-@app.on_event("startup")
+@app.on_event('startup')
 async def set_up_base():
     await create_tables()

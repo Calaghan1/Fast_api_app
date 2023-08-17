@@ -1,4 +1,5 @@
-from fastapi import Depends, BackgroundTasks
+from fastapi import BackgroundTasks, Depends
+
 from database.redis_tools import rd
 from repository.submenu_repository import SubmenuRepository
 from schemas_all import submenu_schemas
@@ -26,23 +27,20 @@ class submenus_service:
             rd.set_pair(f'menus-{menu_id}:submenus-{submenu_id}', result)
             return result
 
-    async def create_submenu(self,back_ground_task: BackgroundTasks, menu_id: str, data: submenu_schemas.SubmenuCreate) -> submenu_schemas.ShowSubmenu:
+    async def create_submenu(self, back_ground_task: BackgroundTasks, menu_id: str, data: submenu_schemas.SubmenuCreate) -> submenu_schemas.ShowSubmenu:
         back_ground_task.add_task(rd.del_key, 'menus')
         back_ground_task.add_task(rd.find_and_del, menu_id)
-        # rd.del_key('menus')
-        # rd.find_and_del(menu_id)
+        back_ground_task.add_task(rd.del_key, 'all_data')
         return await self.submenu_rep._create_submenu(data, menu_id)
 
     async def update_submenu(self, back_ground_task: BackgroundTasks, menu_id: str, submenu_id: str, data: submenu_schemas.SubmenuCreate) -> submenu_schemas.ShowSubmenu:
         back_ground_task.add_task(rd.find_and_del, submenu_id)
         back_ground_task.add_task(rd.del_key, f'menus-{menu_id}:submenus')
-        # rd.find_and_del(submenu_id)
-        # rd.del_key(f'menus-{menu_id}:submenus')
+        back_ground_task.add_task(rd.del_key, 'all_data')
         return await self.submenu_rep._update_submenu(data, menu_id, submenu_id)
 
     async def delete_submenu(self, back_ground_task: BackgroundTasks, menu_id: str, submenu_id: str) -> dict:
         back_ground_task.add_task(rd.del_key, 'menus')
         back_ground_task.add_task(rd.find_and_del, menu_id)
-        # rd.del_key('menus')
-        # rd.find_and_del(menu_id)
+        back_ground_task.add_task(rd.del_key, 'all_data')
         return await self.submenu_rep._delete_submenu(menu_id, submenu_id)

@@ -1,11 +1,10 @@
-import pytest
-from httpx import AsyncClient
-from fastapi import status
-from sqlalchemy.orm import Session
-from app.main import app, reverse
-from database.database import create_async_engine, Base
 import os
 
+import pytest
+from httpx import AsyncClient
+
+from app.main import app, reverse
+from database.database import Base, create_async_engine
 
 LOCAL_DATABASE_URL = 'postgresql+asyncpg://postgres:posrgres@0.0.0.0:5432/postgres'
 DOKER_DATABASE_URL = os.getenv('DATABASE_URL')
@@ -33,14 +32,12 @@ updated_dish = {
 }
 
 
-
-
 @pytest.mark.asyncio
 async def test_create_menu():
     engine = create_async_engine(DOKER_DATABASE_URL)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.post(reverse('create_menu'), json=menu)
         assert response.status_code == 201
         response = response.json()
@@ -49,10 +46,11 @@ async def test_create_menu():
         global menu_id
         menu_id = str(response['id'])
 
+
 @pytest.mark.asyncio
 async def test_create_submenu():
     global submenu_id
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.post(reverse('create_submenu', {'target_menu_id': menu_id}), json=submenu)
         assert response.status_code == 201
         response = response.json()
@@ -61,11 +59,9 @@ async def test_create_submenu():
         submenu_id = str(response['id'])
 
 
-
-
 @pytest.mark.asyncio
 async def test_create_dish():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.post(
             reverse('create_dish', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}), json=dish)
         assert response.status_code == 201
@@ -75,9 +71,10 @@ async def test_create_dish():
         global dish_id
         dish_id = str(response['id'])
 
+
 @pytest.mark.asyncio
 async def test_create_dish_1():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.post(
             reverse('create_dish', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}), json=dish_2)
         assert response.status_code == 201
@@ -88,11 +85,9 @@ async def test_create_dish_1():
         dish_id = str(response['id'])
 
 
-
-
 @pytest.mark.asyncio
 async def get_all_data():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(
             reverse('get_all_data'))
         assert response.status_code == 200
@@ -109,14 +104,13 @@ async def get_all_data():
                     'description': 'My dish description 2',
                     'price': '32.50'
                 }
-                ]}
             ]}
-
+        ]}
 
 
 @pytest.mark.asyncio
 async def test_get_dishes_o():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(reverse('get_dishes', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
         assert response.status_code == 200, 'Fail'
         response = response.json()
@@ -125,9 +119,10 @@ async def test_get_dishes_o():
         assert response[1]['title'] == dish_2['title']
         assert response[1]['description'] == dish_2['description']
 
+
 @pytest.mark.asyncio
 async def test_get_uniq_menu():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(reverse('get_uniq_menu', {'target_menu_id': menu_id}))
         assert response.status_code == 200, 'Fail'
         response = response.json()
@@ -136,9 +131,10 @@ async def test_get_uniq_menu():
         assert response['submenus_count'] == 1
         assert response['dishes_count'] == 2
 
+
 @pytest.mark.asyncio
 async def test_get_uniq_submenu():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(reverse('get_uniq_submenu', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
         assert response.status_code == 200, 'Fail'
         response = response.json()
@@ -146,47 +142,50 @@ async def test_get_uniq_submenu():
         assert response['description'] == submenu['description']
         assert response['dishes_count'] == 2
 
+
 @pytest.mark.asyncio
 async def test_delete_submenu():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.delete(reverse('delete_submenu', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
         assert response.status_code == 200
         assert response.json() == {'status': True, 'message': 'The submenu has been deleted'}
 
+
 @pytest.mark.asyncio
 async def test_get_submenu():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(reverse('get_submenu', {'target_menu_id': menu_id}))
         assert response.status_code == 200, 'Fail'
         assert response.json() == [], 'Fail'
 
+
 @pytest.mark.asyncio
 async def test_get_dishes_o1():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(reverse('get_dishes', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
         assert response.status_code == 200, 'Fail'
         response = response.json()
         assert response == []
 
+
 @pytest.mark.asyncio
 async def test_get_uniq_submenu_1():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(reverse('get_uniq_submenu', {'target_menu_id': menu_id, 'target_submenu_id': submenu_id}))
         assert response.status_code == 404, 'Fail'
 
+
 @pytest.mark.asyncio
 async def test_delete_menu():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.delete(reverse('delete_menu', {'target_menu_id': menu_id}))
         assert response.status_code == 200
         assert response.json() == {'status': True, 'message': 'The menu has been deleted'}
 
+
 @pytest.mark.asyncio
 async def test_get_menu():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url='http://test') as client:
         response = await client.get(reverse('get_menu'))
         assert response.status_code == 200, 'Fail'
         assert response.json() == [], 'Fail'
-        
-
-

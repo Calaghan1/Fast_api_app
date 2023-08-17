@@ -1,11 +1,11 @@
 from fastapi import Depends, HTTPException
-from sqlalchemy import update
+from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 import database.models as models
 from database.database import get_db
 from schemas_all import dish_schemas
-from sqlalchemy import delete, func, select, distinct, outerjoin
+
 
 class DishesRepository:
     def __init__(self, db: Session = Depends(get_db)) -> None:
@@ -33,7 +33,7 @@ class DishesRepository:
     async def _get_uniq_dish(self, api_test_dish_id: str) -> dish_schemas.ShowDishes:
         try:
             dish = await self.db.execute(select(models.Dishes.id, models.Dishes.title, models.Dishes.description,
-                                              models.Dishes.price).where(models.Dishes.id == api_test_dish_id))
+                                                models.Dishes.price).where(models.Dishes.id == api_test_dish_id))
             dish = dish.one()
             print(dish)
             if not dish:
@@ -51,7 +51,7 @@ class DishesRepository:
         except Exception:
             raise HTTPException(status_code=404, detail='dish not found')
         await self.db.execute(update(models.Dishes).where(models.Dishes.id == api_test_dish_id).values(title=menu.title, description=menu.description,
-                                                                                          price=menu.price))
+                                                                                                       price=menu.price))
         await self.db.commit()
         return await self._get_uniq_dish(api_test_dish_id)
 

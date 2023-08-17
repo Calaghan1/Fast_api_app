@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 
 from schemas_all import submenu_schemas
 from services.submenu_service import submenus_service
